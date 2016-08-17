@@ -621,7 +621,9 @@ static const UConverterImpl _UTF16BEImpl={
     _UTF16BEGetName,
     NULL,
     NULL,
-    ucnv_getNonSurrogateUnicodeSet
+    ucnv_getNonSurrogateUnicodeSet,
+    NULL,
+    NULL
 };
 
 static const UConverterStaticData _UTF16BEStaticData={
@@ -1217,7 +1219,9 @@ static const UConverterImpl _UTF16LEImpl={
     _UTF16LEGetName,
     NULL,
     NULL,
-    ucnv_getNonSurrogateUnicodeSet
+    ucnv_getNonSurrogateUnicodeSet,
+    NULL,
+    NULL
 };
 
 
@@ -1486,7 +1490,9 @@ static const UConverterImpl _UTF16Impl = {
     _UTF16GetName,
     NULL,
     NULL,
-    ucnv_getNonSurrogateUnicodeSet
+    ucnv_getNonSurrogateUnicodeSet,
+    NULL,
+    NULL
 };
 
 static const UConverterStaticData _UTF16StaticData = {
@@ -1528,7 +1534,9 @@ static const UConverterImpl _UTF16v2Impl = {
     _UTF16GetName,
     NULL,
     NULL,
-    ucnv_getNonSurrogateUnicodeSet
+    ucnv_getNonSurrogateUnicodeSet,
+    NULL,
+    NULL
 };
 
 static const UConverterStaticData _UTF16v2StaticData = {

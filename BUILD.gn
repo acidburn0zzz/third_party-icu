@@ -1,16 +1,8 @@
-# Copyright 2014 The Chromium Authors. All rights reserved.
+# Copyright 2016 The Fuchsia Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
 import("//third_party/icu/config.gni")
-
-if (is_android) {
-  import("//build/config/android/rules.gni")
-}
-
-if (is_mac) {
-  import("//build/config/sanitizers/sanitizers.gni")
-}
 
 # Meta target that includes both icuuc and icui18n. Most targets want both.
 # You can depend on the individually if you need to.
@@ -31,13 +23,9 @@ config("icu_config") {
     # We don't use ICU plugins and dyload is only necessary for them.
     # NaCl-related builds also fail looking for dlfcn.h when it's enabled.
     "U_ENABLE_DYLOAD=0",
-
-    # With exception disabled, MSVC emits C4577 warning on coming across
-    # 'noexcept'. See http://bugs.icu-project.org/trac/ticket/12406
-    # TODO(jshin): Remove this when updating to a newer version with this fixed.
-    "U_NOEXCEPT=",
   ]
 
+  is_component_build = false
   if (!is_component_build) {
     defines += [ "U_STATIC_IMPLEMENTATION" ]
   }
@@ -50,11 +38,7 @@ config("icu_config") {
   if (icu_use_data_file) {
     defines += [ "ICU_UTIL_DATA_IMPL=ICU_UTIL_DATA_FILE" ]
   } else {
-    if (is_win) {
-      defines += [ "ICU_UTIL_DATA_IMPL=ICU_UTIL_DATA_SHARED" ]
-    } else {
-      defines += [ "ICU_UTIL_DATA_IMPL=ICU_UTIL_DATA_STATIC" ]
-    }
+    defines += [ "ICU_UTIL_DATA_IMPL=ICU_UTIL_DATA_STATIC" ]
   }
 }
 
@@ -72,54 +56,49 @@ config("icu_code") {
     "U_CHARSET_IS_UTF8=1",
   ]
 
-  if (is_win) {
-    # Disable some compiler warnings.
-    cflags += [
-      "/wd4005",  # Macro redefinition.
-      "/wd4068",  # Unknown pragmas.
-      "/wd4267",  # Conversion from size_t on 64-bits.
-      "/wd4996",  # Deprecated functions.
-    ]
-  } else if (is_linux || is_android) {
-    cflags += [
-      # Since ICU wants to internally use its own deprecated APIs, don't
-      # complain about it.
-      "-Wno-deprecated-declarations",
-      "-Wno-unused-function",
-    ]
-  }
+  cflags += [
+    # Since ICU wants to internally use its own deprecated APIs, don't
+    # complain about it.
+    "-Wno-deprecated-declarations",
+    "-Wno-unused-function",
+  ]
+
   if (is_clang) {
     cflags += [
       # ICU uses its own deprecated functions.
       "-Wno-deprecated-declarations",
+
       # ICU prefers `a && b || c` over `(a && b) || c`.
       "-Wno-logical-op-parentheses",
+
       # ICU has some `unsigned < 0` checks.
       "-Wno-tautological-compare",
+
       # uresdata.c has switch(RES_GET_TYPE(x)) code. The
       # RES_GET_TYPE macro returns an UResType enum, but some switch
       # statement contains case values that aren't part of that
       # enum (e.g. URES_TABLE32 which is in UResInternalType). This
       # is on purpose.
       "-Wno-switch",
+
       # ICU has some code with the pattern:
       #   if (found = uprv_getWindowsTimeZoneInfo(...))
       "-Wno-parentheses",
+
       # ucnv2022.cpp contains three functions that are only used when
       # certain preprocessor defines are set.
       # unistr.cpp also has an unused function for non-component builds.
       "-Wno-unused-function",
+
+      # clang compares about comparing signed and non-signed numbers
+      "-Wno-sign-compare",
     ]
-    if (is_win) {
-      cflags += [
-        # See http://bugs.icu-project.org/trac/ticket/11122
-        "-Wno-inline-new-delete",
-        "-Wno-implicit-exception-spec-mismatch",
-        # See http://www.icu-project.org/trac/ticket/11759.
-        "-Wno-unused-const-variable",
-      ]
-    }
   }
+}
+
+# Allows turning Run-Time Type Identification on.
+config("rtti") {
+  cflags_cc = [ "-frtti" ]
 }
 
 component("icui18n") {
@@ -149,34 +128,35 @@ component("icui18n") {
     "source/i18n/chnsecal.h",
     "source/i18n/choicfmt.cpp",
     "source/i18n/coleitr.cpp",
+    "source/i18n/coll.cpp",
+    "source/i18n/collation.cpp",
+    "source/i18n/collation.h",
     "source/i18n/collationbuilder.cpp",
     "source/i18n/collationbuilder.h",
     "source/i18n/collationcompare.cpp",
     "source/i18n/collationcompare.h",
-    "source/i18n/collation.cpp",
-    "source/i18n/collationdatabuilder.cpp",
-    "source/i18n/collationdatabuilder.h",
     "source/i18n/collationdata.cpp",
     "source/i18n/collationdata.h",
+    "source/i18n/collationdatabuilder.cpp",
+    "source/i18n/collationdatabuilder.h",
     "source/i18n/collationdatareader.cpp",
     "source/i18n/collationdatareader.h",
     "source/i18n/collationdatawriter.cpp",
     "source/i18n/collationdatawriter.h",
-    "source/i18n/collationfastlatinbuilder.cpp",
-    "source/i18n/collationfastlatinbuilder.h",
     "source/i18n/collationfastlatin.cpp",
     "source/i18n/collationfastlatin.h",
+    "source/i18n/collationfastlatinbuilder.cpp",
+    "source/i18n/collationfastlatinbuilder.h",
     "source/i18n/collationfcd.cpp",
     "source/i18n/collationfcd.h",
-    "source/i18n/collation.h",
     "source/i18n/collationiterator.cpp",
     "source/i18n/collationiterator.h",
     "source/i18n/collationkeys.cpp",
     "source/i18n/collationkeys.h",
     "source/i18n/collationroot.cpp",
+    "source/i18n/collationroot.h",
     "source/i18n/collationrootelements.cpp",
     "source/i18n/collationrootelements.h",
-    "source/i18n/collationroot.h",
     "source/i18n/collationruleparser.cpp",
     "source/i18n/collationruleparser.h",
     "source/i18n/collationsets.cpp",
@@ -187,7 +167,6 @@ component("icui18n") {
     "source/i18n/collationtailoring.h",
     "source/i18n/collationweights.cpp",
     "source/i18n/collationweights.h",
-    "source/i18n/coll.cpp",
     "source/i18n/collunsafe.h",
     "source/i18n/compactdecimalformat.cpp",
     "source/i18n/coptccal.cpp",
@@ -222,6 +201,9 @@ component("icui18n") {
     "source/i18n/dcfmtsym.cpp",
     "source/i18n/decContext.c",
     "source/i18n/decContext.h",
+    "source/i18n/decNumber.c",
+    "source/i18n/decNumber.h",
+    "source/i18n/decNumberLocal.h",
     "source/i18n/decfmtst.cpp",
     "source/i18n/decfmtst.h",
     "source/i18n/decimalformatpattern.cpp",
@@ -230,13 +212,10 @@ component("icui18n") {
     "source/i18n/decimfmt.cpp",
     "source/i18n/decimfmtimpl.cpp",
     "source/i18n/decimfmtimpl.h",
-    "source/i18n/decNumber.c",
-    "source/i18n/decNumber.h",
-    "source/i18n/decNumberLocal.h",
     "source/i18n/digitaffix.cpp",
+    "source/i18n/digitaffix.h",
     "source/i18n/digitaffixesandpadding.cpp",
     "source/i18n/digitaffixesandpadding.h",
-    "source/i18n/digitaffix.h",
     "source/i18n/digitformatter.cpp",
     "source/i18n/digitformatter.h",
     "source/i18n/digitgrouping.cpp",
@@ -246,8 +225,8 @@ component("icui18n") {
     "source/i18n/digitlst.cpp",
     "source/i18n/digitlst.h",
     "source/i18n/dtfmtsym.cpp",
-    "source/i18n/dtitvfmt.cpp",
     "source/i18n/dtitv_impl.h",
+    "source/i18n/dtitvfmt.cpp",
     "source/i18n/dtitvinf.cpp",
     "source/i18n/dtptngen.cpp",
     "source/i18n/dtptngen_impl.h",
@@ -256,8 +235,8 @@ component("icui18n") {
     "source/i18n/esctrn.h",
     "source/i18n/ethpccal.cpp",
     "source/i18n/ethpccal.h",
-    "source/i18n/fmtable_cnv.cpp",
     "source/i18n/fmtable.cpp",
+    "source/i18n/fmtable_cnv.cpp",
     "source/i18n/fmtableimp.h",
     "source/i18n/format.cpp",
     "source/i18n/fphdlimp.cpp",
@@ -320,9 +299,9 @@ component("icui18n") {
     "source/i18n/quantityformatter.h",
     "source/i18n/rbnf.cpp",
     "source/i18n/rbt.cpp",
+    "source/i18n/rbt.h",
     "source/i18n/rbt_data.cpp",
     "source/i18n/rbt_data.h",
-    "source/i18n/rbt.h",
     "source/i18n/rbt_pars.cpp",
     "source/i18n/rbt_pars.h",
     "source/i18n/rbt_rule.cpp",
@@ -405,10 +384,10 @@ component("icui18n") {
     "source/i18n/ucln_in.cpp",
     "source/i18n/ucln_in.h",
     "source/i18n/ucol.cpp",
-    "source/i18n/ucoleitr.cpp",
     "source/i18n/ucol_imp.h",
     "source/i18n/ucol_res.cpp",
     "source/i18n/ucol_sit.cpp",
+    "source/i18n/ucoleitr.cpp",
     "source/i18n/ucsdet.cpp",
     "source/i18n/ucurr.cpp",
     "source/i18n/ucurrimp.h",
@@ -428,14 +407,14 @@ component("icui18n") {
     "source/i18n/unum.cpp",
     "source/i18n/unumsys.cpp",
     "source/i18n/upluralrules.cpp",
-    "source/i18n/uregexc.cpp",
     "source/i18n/uregex.cpp",
+    "source/i18n/uregexc.cpp",
     "source/i18n/uregion.cpp",
     "source/i18n/usearch.cpp",
+    "source/i18n/uspoof.cpp",
     "source/i18n/uspoof_build.cpp",
     "source/i18n/uspoof_conf.cpp",
     "source/i18n/uspoof_conf.h",
-    "source/i18n/uspoof.cpp",
     "source/i18n/uspoof_impl.cpp",
     "source/i18n/uspoof_impl.h",
     "source/i18n/uspoof_wsconf.cpp",
@@ -454,12 +433,6 @@ component("icui18n") {
     "source/i18n/vtzone.cpp",
     "source/i18n/vzone.cpp",
     "source/i18n/vzone.h",
-    "source/i18n/windtfmt.cpp",
-    "source/i18n/windtfmt.h",
-    "source/i18n/winnmfmt.cpp",
-    "source/i18n/winnmfmt.h",
-    "source/i18n/wintzimpl.cpp",
-    "source/i18n/wintzimpl.h",
     "source/i18n/zonemeta.cpp",
     "source/i18n/zonemeta.h",
     "source/i18n/zrule.cpp",
@@ -467,6 +440,7 @@ component("icui18n") {
     "source/i18n/ztrans.cpp",
     "source/i18n/ztrans.h",
   ]
+
   # ls source/i18n/unicode/*h | sort | sed 's/^\(.*\)$/    "\1",/'
   public = [
     "source/i18n/unicode/alphaindex.h",
@@ -557,26 +531,16 @@ component("icui18n") {
     ":icuuc",
   ]
 
-  # ICU uses RTTI, replace the default "no rtti" config.
-  configs -= [
-    "//build/config/compiler:no_rtti",  # ICU uses RTTI.
-    "//build/config/compiler:chromium_code",
-  ]
-  configs += [
-    "//build/config/compiler:rtti",
-    "//build/config/compiler:no_chromium_code",
-  ]
+  # ICU uses RTTI
+  configs += [ ":rtti" ]
 
   configs += [ ":icu_code" ]
   public_configs = [ ":icu_config" ]
 
-  cflags = []
-  if (is_android || is_linux) {
-    cflags += [
-      # ICU uses its own deprecated functions.
-      "-Wno-deprecated-declarations",
-    ]
-  }
+  cflags = [
+    # ICU uses its own deprecated functions.
+    "-Wno-deprecated-declarations",
+  ]
 }
 
 component("icuuc") {
@@ -590,8 +554,8 @@ component("icuuc") {
     "source/common/brkeng.h",
     "source/common/brkiter.cpp",
     "source/common/bytestream.cpp",
-    "source/common/bytestriebuilder.cpp",
     "source/common/bytestrie.cpp",
+    "source/common/bytestriebuilder.cpp",
     "source/common/bytestrieiterator.cpp",
     "source/common/caniter.cpp",
     "source/common/chariter.cpp",
@@ -634,8 +598,8 @@ component("icuuc") {
     "source/common/messagepattern.cpp",
     "source/common/msvcres.h",
     "source/common/mutex.h",
-    "source/common/norm2allmodes.h",
     "source/common/norm2_nfc_data.h",
+    "source/common/norm2allmodes.h",
     "source/common/normalizer2.cpp",
     "source/common/normalizer2impl.cpp",
     "source/common/normalizer2impl.h",
@@ -646,8 +610,8 @@ component("icuuc") {
     "source/common/pluralmap.cpp",
     "source/common/pluralmap.h",
     "source/common/propname.cpp",
-    "source/common/propname_data.h",
     "source/common/propname.h",
+    "source/common/propname_data.h",
     "source/common/propsvec.c",
     "source/common/propsvec.h",
     "source/common/punycode.cpp",
@@ -669,8 +633,8 @@ component("icuuc") {
     "source/common/rbbistbl.cpp",
     "source/common/rbbitblb.cpp",
     "source/common/rbbitblb.h",
-    "source/common/resbund_cnv.cpp",
     "source/common/resbund.cpp",
+    "source/common/resbund_cnv.cpp",
     "source/common/resource.cpp",
     "source/common/resource.h",
     "source/common/ruleiter.cpp",
@@ -697,61 +661,61 @@ component("icuuc") {
     "source/common/uarrsort.h",
     "source/common/uassert.h",
     "source/common/ubidi.c",
+    "source/common/ubidi_props.c",
+    "source/common/ubidi_props.h",
+    "source/common/ubidi_props_data.h",
     "source/common/ubidiimp.h",
     "source/common/ubidiln.c",
-    "source/common/ubidi_props.c",
-    "source/common/ubidi_props_data.h",
-    "source/common/ubidi_props.h",
     "source/common/ubidiwrt.c",
     "source/common/ubrk.cpp",
     "source/common/ubrkimpl.h",
     "source/common/ucase.cpp",
     "source/common/ucase.h",
+    "source/common/ucase_props_data.h",
     "source/common/ucasemap.cpp",
     "source/common/ucasemap_titlecase_brkiter.cpp",
-    "source/common/ucase_props_data.h",
     "source/common/ucat.c",
     "source/common/uchar.c",
     "source/common/uchar_props_data.h",
-    "source/common/ucharstriebuilder.cpp",
     "source/common/ucharstrie.cpp",
+    "source/common/ucharstriebuilder.cpp",
     "source/common/ucharstrieiterator.cpp",
     "source/common/uchriter.cpp",
+    "source/common/ucln.h",
     "source/common/ucln_cmn.cpp",
     "source/common/ucln_cmn.h",
-    "source/common/ucln.h",
     "source/common/ucln_imp.h",
     "source/common/ucmndata.c",
     "source/common/ucmndata.h",
+    "source/common/ucnv.c",
     "source/common/ucnv2022.cpp",
     "source/common/ucnv_bld.cpp",
     "source/common/ucnv_bld.h",
-    "source/common/ucnvbocu.cpp",
-    "source/common/ucnv.c",
     "source/common/ucnv_cb.c",
     "source/common/ucnv_cnv.c",
     "source/common/ucnv_cnv.h",
     "source/common/ucnv_ct.c",
-    "source/common/ucnvdisp.c",
     "source/common/ucnv_err.c",
     "source/common/ucnv_ext.cpp",
     "source/common/ucnv_ext.h",
-    "source/common/ucnvhz.c",
     "source/common/ucnv_imp.h",
     "source/common/ucnv_io.cpp",
     "source/common/ucnv_io.h",
-    "source/common/ucnvisci.c",
-    "source/common/ucnvlat1.c",
     "source/common/ucnv_lmb.c",
-    "source/common/ucnvmbcs.cpp",
-    "source/common/ucnvmbcs.h",
-    "source/common/ucnvscsu.c",
-    "source/common/ucnvsel.cpp",
     "source/common/ucnv_set.c",
     "source/common/ucnv_u16.c",
     "source/common/ucnv_u32.c",
     "source/common/ucnv_u7.c",
     "source/common/ucnv_u8.c",
+    "source/common/ucnvbocu.cpp",
+    "source/common/ucnvdisp.c",
+    "source/common/ucnvhz.c",
+    "source/common/ucnvisci.c",
+    "source/common/ucnvlat1.c",
+    "source/common/ucnvmbcs.cpp",
+    "source/common/ucnvmbcs.h",
+    "source/common/ucnvscsu.c",
+    "source/common/ucnvsel.cpp",
     "source/common/ucol_data.h",
     "source/common/ucol_swp.cpp",
     "source/common/ucol_swp.h",
@@ -772,12 +736,12 @@ component("icuuc") {
     "source/common/uinvchar.h",
     "source/common/uiter.cpp",
     "source/common/ulist.c",
-    "source/common/ulistformatter.cpp",
     "source/common/ulist.h",
+    "source/common/ulistformatter.cpp",
     "source/common/uloc.cpp",
-    "source/common/ulocimp.h",
     "source/common/uloc_keytype.cpp",
     "source/common/uloc_tag.c",
+    "source/common/ulocimp.h",
     "source/common/umapfile.c",
     "source/common/umapfile.h",
     "source/common/umath.c",
@@ -788,27 +752,27 @@ component("icuuc") {
     "source/common/unifiedcache.h",
     "source/common/unifilt.cpp",
     "source/common/unifunct.cpp",
-    "source/common/uniset_closure.cpp",
     "source/common/uniset.cpp",
+    "source/common/uniset_closure.cpp",
     "source/common/uniset_props.cpp",
     "source/common/unisetspan.cpp",
     "source/common/unisetspan.h",
-    "source/common/unistrappender.h",
+    "source/common/unistr.cpp",
     "source/common/unistr_case.cpp",
     "source/common/unistr_case_locale.cpp",
     "source/common/unistr_cnv.cpp",
-    "source/common/unistr.cpp",
     "source/common/unistr_props.cpp",
     "source/common/unistr_titlecase_brkiter.cpp",
-    "source/common/unormcmp.cpp",
+    "source/common/unistrappender.h",
     "source/common/unorm.cpp",
+    "source/common/unormcmp.cpp",
     "source/common/unormimp.h",
     "source/common/uobject.cpp",
     "source/common/uposixdefs.h",
     "source/common/uprops.cpp",
     "source/common/uprops.h",
-    "source/common/uresbund.cpp",
     "source/common/ures_cnv.c",
+    "source/common/uresbund.cpp",
     "source/common/uresdata.cpp",
     "source/common/uresdata.h",
     "source/common/uresimp.h",
@@ -821,24 +785,24 @@ component("icuuc") {
     "source/common/uscript_props.cpp",
     "source/common/uset.cpp",
     "source/common/uset_imp.h",
-    "source/common/usetiter.cpp",
     "source/common/uset_props.cpp",
+    "source/common/usetiter.cpp",
     "source/common/ushape.cpp",
     "source/common/usprep.cpp",
     "source/common/ustack.cpp",
-    "source/common/ustrcase.cpp",
-    "source/common/ustrcase_locale.cpp",
     "source/common/ustr_cnv.cpp",
     "source/common/ustr_cnv.h",
+    "source/common/ustr_imp.h",
+    "source/common/ustr_titlecase_brkiter.cpp",
+    "source/common/ustr_wcs.cpp",
+    "source/common/ustrcase.cpp",
+    "source/common/ustrcase_locale.cpp",
     "source/common/ustrenum.cpp",
     "source/common/ustrenum.h",
     "source/common/ustrfmt.c",
     "source/common/ustrfmt.h",
-    "source/common/ustr_imp.h",
     "source/common/ustring.cpp",
-    "source/common/ustr_titlecase_brkiter.cpp",
     "source/common/ustrtrns.cpp",
-    "source/common/ustr_wcs.cpp",
     "source/common/utext.cpp",
     "source/common/utf_impl.c",
     "source/common/util.cpp",
@@ -846,12 +810,12 @@ component("icuuc") {
     "source/common/util_props.cpp",
     "source/common/utrace.c",
     "source/common/utracimp.h",
-    "source/common/utrie2_builder.cpp",
-    "source/common/utrie2.cpp",
-    "source/common/utrie2.h",
-    "source/common/utrie2_impl.h",
     "source/common/utrie.cpp",
     "source/common/utrie.h",
+    "source/common/utrie2.cpp",
+    "source/common/utrie2.h",
+    "source/common/utrie2_builder.cpp",
+    "source/common/utrie2_impl.h",
     "source/common/uts46.cpp",
     "source/common/utypeinfo.h",
     "source/common/utypes.c",
@@ -861,9 +825,8 @@ component("icuuc") {
     "source/common/uvectr32.h",
     "source/common/uvectr64.cpp",
     "source/common/uvectr64.h",
-    "source/common/wintz.c",
-    "source/common/wintz.h",
   ]
+
   # ls  source/common/unicode/*h | sort | sed 's/^\(.*\)$/    "\1",/'
   public = [
     "source/common/unicode/appendable.h",
@@ -958,45 +921,19 @@ component("icuuc") {
     ":icudata",
   ]
 
-  if (is_mac && using_sanitizer) {
-    deps += [ "//buildtools/third_party/libc++abi" ]
-  }
-
-  configs -= [
-    "//build/config/compiler:no_rtti",  # ICU uses RTTI.
-    "//build/config/compiler:chromium_code",
-  ]
-  configs += [
-    "//build/config/compiler:rtti",
-    "//build/config/compiler:no_chromium_code",
-  ]
+  configs += [ ":rtti" ]
   configs += [ ":icu_code" ]
 
   public_configs = [ ":icu_config" ]
 
-  if (is_win || icu_use_data_file) {
+  if (icu_use_data_file) {
     sources += [ "source/stubdata/stubdata.c" ]
     defines += [ "U_ICUDATAENTRY_IN_COMMON" ]
   }
 }
 
-if (is_android && enable_java_templates) {
-  android_assets("icu_assets") {
-    if (icu_use_data_file) {
-      sources = [ "$root_out_dir/icudtl.dat" ]
-      deps = [ ":icudata" ]
-      disable_compression = true
-    }
-  }
-}
+data_dir = "common"
 
-# TODO(GYP): Gyp has considerations here for QNX and for the host toolchain
-#  that have not been ported over.
-if (is_android) {
-  data_dir = "android"
-} else {
-  data_dir = "common"
-}
 if (current_cpu == "mips" || current_cpu == "mips64") {
   data_bundle_prefix = "icudtb"
 } else {
@@ -1004,53 +941,44 @@ if (current_cpu == "mips" || current_cpu == "mips64") {
 }
 data_bundle = "${data_bundle_prefix}.dat"
 
-# TODO(GYP) support use_system_icu.
 if (icu_use_data_file) {
-  if (is_ios) {
-    bundle_data("icudata") {
-      sources = [ "$data_dir/$data_bundle" ]
-      outputs = [ "{{bundle_resources_dir}}/{{source_file_part}}" ]
-    }
-  } else {
-    copy("icudata") {
-      sources = [ "$data_dir/$data_bundle" ]
-      outputs = [ "$root_out_dir/$data_bundle" ]
-      data = [ "$root_out_dir/$data_bundle" ]
-    }
+  copy("icudata") {
+    sources = [
+      "$data_dir/$data_bundle",
+    ]
+    outputs = [
+      "$root_out_dir/$data_bundle",
+    ]
+    data = [
+      "$root_out_dir/$data_bundle",
+    ]
   }
 } else {
-  if (is_win) {
-    # On Windows the target DLL is pre-built so just use a copy rule.
-    # data_bundle and data_dir have to be used to avoid 'unused variable'
-    # error.
-    data_bundle = "icudt.dll"
-    data_dir = "windows"
-    copy("icudata") {
-      sources = [ "$data_dir/$data_bundle" ]
-      outputs = [ "$root_out_dir/$data_bundle" ]
-      data = outputs
-    }
-  } else {
-    data_assembly = "$target_gen_dir/${data_bundle_prefix}_dat.S"
-    action("make_data_assembly") {
-      script = "scripts/make_data_assembly.py"
-      inputs = [ "$data_dir/$data_bundle" ]
-      outputs = [ "$data_assembly" ]
-      args = [
-        rebase_path(inputs[0], root_build_dir),
-        rebase_path(data_assembly, root_build_dir),
-      ]
-      # TODO(GYP): Gyp has considerations here for QNX and for the host
-      # toolchain that have not been ported over.
-      if (is_mac || is_ios) {
-        args += [ "--mac" ]
-      }
-    }
+  data_assembly = "$target_gen_dir/${data_bundle_prefix}_dat.S"
+  action("make_data_assembly") {
+    script = "scripts/make_data_assembly.py"
 
-    source_set("icudata") {
-      sources = [ "$data_assembly" ]
-      defines = [ "U_HIDE_DATA_SYMBOL" ]
-      deps = [ ":make_data_assembly", ]
+    inputs = [
+      "$data_dir/$data_bundle",
+    ]
+    outputs = [
+      "$data_assembly",
+    ]
+    args = [
+      rebase_path(inputs[0], root_build_dir),
+      rebase_path(data_assembly, root_build_dir),
+    ]
+    if (host_os == "mac") {
+      args += [ "--mac" ]
     }
+  }
+  static_library("icudata") {
+    sources = [
+      "$data_assembly",
+    ]
+    defines = [ "U_HIDE_DATA_SYMBOL" ]
+    deps = [
+      ":make_data_assembly",
+    ]
   }
 }
