@@ -1,15 +1,15 @@
 Name: icu
 URL: http://site.icu-project.org/
-Version: 56.1
+Version: 57.1
 License: MIT
 Security Critical: yes
 
 Description:
-This directory contains the source code of ICU 56.1 for C/C++.
+This directory contains the source code of ICU 57.1 for C/C++.
 
 A. How to update ICU
 
-1. Run "scripts/update.sh <version>" (e.g. 56-1).
+1. Run "scripts/update.sh <version>" (e.g. 57-1).
    This will download ICU from the upstream svn repository.
    It does preserve Fuchsia-specific build files (*local.mk) and
    converter files. (see section C)

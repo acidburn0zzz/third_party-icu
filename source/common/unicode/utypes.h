@@ -1,6 +1,6 @@
 /*
 **********************************************************************
-*   Copyright (C) 1996-2015, International Business Machines
+*   Copyright (C) 1996-2016, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 **********************************************************************
 *
@@ -305,11 +305,7 @@ typedef double UDate;
 #define U_IO_API
 #define U_TOOLUTIL_API
 #elif defined(U_COMMON_IMPLEMENTATION)
-#if defined(U_ICUDATAENTRY_IN_COMMON)
-#define U_DATA_API     U_EXPORT
-#else
 #define U_DATA_API     U_IMPORT
-#endif
 #define U_COMMON_API   U_EXPORT
 #define U_I18N_API     U_IMPORT
 #define U_LAYOUT_API   U_IMPORT
@@ -653,10 +649,8 @@ typedef enum UErrorCode {
     U_REGEX_STACK_OVERFLOW,               /**< Regular expression backtrack stack overflow.       */
     U_REGEX_TIME_OUT,                     /**< Maximum allowed match time exceeded                */
     U_REGEX_STOPPED_BY_CALLER,            /**< Matching operation aborted by user callback fn.    */
-#ifndef U_HIDE_DRAFT_API
-    U_REGEX_PATTERN_TOO_BIG,              /**< Pattern exceeds limits on size or complexity. @draft ICU 55 */
-    U_REGEX_INVALID_CAPTURE_GROUP_NAME,   /**< Invalid capture group name. @draft ICU 55 */
-#endif  /* U_HIDE_DRAFT_API */
+    U_REGEX_PATTERN_TOO_BIG,              /**< Pattern exceeds limits on size or complexity. @stable ICU 55 */
+    U_REGEX_INVALID_CAPTURE_GROUP_NAME,   /**< Invalid capture group name. @stable ICU 55 */
     U_REGEX_ERROR_LIMIT=U_REGEX_STOPPED_BY_CALLER+3, /**< This must always be the last value to indicate the limit for regexp errors */
 
     /*

@@ -1,6 +1,6 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2015 International Business Machines
+// * Copyright (C) 2016 International Business Machines
 // * Corporation and others. All Rights Reserved.
 // * Tool: org.unicode.cldr.icu.NewLdml2IcuConverter
 // * Source File: <path>/common/main/hi.xml
@@ -213,7 +213,7 @@ hi{
         minimumGroupingDigits{"1"}
         native{"deva"}
     }
-    Version{"2.1.19.47"}
+    Version{"2.1.22.93"}
     calendar{
         ethiopic{
             monthNames{
@@ -386,16 +386,16 @@ hi{
         }
         gregorian{
             AmPmMarkers{
-                "am",
-                "pm",
+                "पूर्वाह्न",
+                "अपराह्न",
             }
             AmPmMarkersAbbr{
                 "पूर्व",
                 "अपर",
             }
             AmPmMarkersNarrow{
-                "am",
-                "pm",
+                "पू",
+                "अ",
             }
             DateTimePatterns{
                 "h:mm:ss a zzzz",
@@ -550,14 +550,14 @@ hi{
                     narrow{
                         afternoon1{"अपराह्न"}
                         evening1{"शाम"}
-                        midnight{"m"}
+                        midnight{"आधी रात"}
                         morning1{"सुबह"}
                         night1{"शाम"}
                     }
                     wide{
                         afternoon1{"अपराह्न"}
                         evening1{"शाम"}
-                        midnight{"midnight"}
+                        midnight{"मध्यरात्रि"}
                         morning1{"सुबह"}
                         night1{"रात"}
                     }

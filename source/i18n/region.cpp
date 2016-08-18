@@ -67,7 +67,8 @@ static UVector *allRegions = NULL;
 static const UChar UNKNOWN_REGION_ID [] = { 0x5A, 0x5A, 0 };  /* "ZZ" */
 static const UChar OUTLYING_OCEANIA_REGION_ID [] = { 0x51, 0x4F, 0 };  /* "QO" */
 static const UChar WORLD_ID [] = { 0x30, 0x30, 0x31, 0 };  /* "001" */
-static const UChar RANGE_MARKER = 0x7eu; /* '~' */
+static const UChar RANGE_MARKER [] = { 0x7e, 0 }; /* "~" */
+static const UnicodeString RANGE_MARKER_STRING(RANGE_MARKER);
 
 UOBJECT_DEFINE_RTTI_IMPLEMENTATION(RegionNameEnumeration)
 
@@ -120,7 +121,7 @@ void Region::loadRegionData(UErrorCode &status) {
 
     while ( ures_hasNext(regionRegular.getAlias()) ) {
         UnicodeString regionName = ures_getNextUnicodeString(regionRegular.getAlias(),NULL,&status);
-        int32_t rangeMarkerLocation = regionName.indexOf(RANGE_MARKER);
+        int32_t rangeMarkerLocation = regionName.indexOf(RANGE_MARKER_STRING);
         UChar buf[6];
         regionName.extract(buf,6,status);
         if ( rangeMarkerLocation > 0 ) {
@@ -139,7 +140,7 @@ void Region::loadRegionData(UErrorCode &status) {
 
     while ( ures_hasNext(regionMacro.getAlias()) ) {
         UnicodeString regionName = ures_getNextUnicodeString(regionMacro.getAlias(),NULL,&status);
-        int32_t rangeMarkerLocation = regionName.indexOf(RANGE_MARKER);
+        int32_t rangeMarkerLocation = regionName.indexOf(RANGE_MARKER_STRING);
         UChar buf[6];
         regionName.extract(buf,6,status);
         if ( rangeMarkerLocation > 0 ) {

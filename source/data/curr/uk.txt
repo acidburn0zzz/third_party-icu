@@ -1,6 +1,6 @@
 ﻿// ***************************************************************************
 // *
-// * Copyright (C) 2015 International Business Machines
+// * Copyright (C) 2016 International Business Machines
 // * Corporation and others. All Rights Reserved.
 // * Tool: org.unicode.cldr.icu.NewLdml2IcuConverter
 // * Source File: <path>/common/main/uk.xml
@@ -913,7 +913,7 @@ uk{
             "танзанійський шилінг",
         }
         UAH{
-            "грн.",
+            "₴",
             "українська гривня",
         }
         UAK{
@@ -1202,6 +1202,7 @@ uk{
     Currencies%variant{
         GEL{"₾"}
         TRY{"TL"}
+        UAH{"грн."}
     }
     CurrencyPlurals{
         ADP{
@@ -2261,5 +2262,5 @@ uk{
         one{"{0} {1}"}
         other{"{0} {1}"}
     }
-    Version{"2.1.19.94"}
+    Version{"2.1.22.93"}
 }
