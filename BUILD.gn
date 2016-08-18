@@ -652,6 +652,7 @@ component("icuuc") {
     "source/common/servslkf.cpp",
     "source/common/sharedobject.cpp",
     "source/common/sharedobject.h",
+    "source/common/simpleformatter.cpp",
     "source/common/sprpimpl.h",
     "source/common/stringpiece.cpp",
     "source/common/stringtriebuilder.cpp",
@@ -746,6 +747,7 @@ component("icuuc") {
     "source/common/umutex.cpp",
     "source/common/umutex.h",
     "source/common/unames.cpp",
+    "source/common/unicode/simpleformatter.h",
     "source/common/unifiedcache.cpp",
     "source/common/unifiedcache.h",
     "source/common/unifilt.cpp",
@@ -821,6 +823,8 @@ component("icuuc") {
     "source/common/uvectr32.h",
     "source/common/uvectr64.cpp",
     "source/common/uvectr64.h",
+    "source/i18n/dayperiodrules.cpp",
+    "source/i18n/dayperiodrules.h",
   ]
 
   # ls  source/common/unicode/*h | sort | sed 's/^\(.*\)$/    "\1",/'
