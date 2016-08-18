@@ -1,7 +1,7 @@
-diff --git a/source/data/brkitr/word.txt b/source/data/brkitr/word.txt
+diff --git a/source/data/brkitr/rules/word.txt b/source/data/brkitr/rules/word.txt
 index f89a2fe..c74da4c 100644
---- a/source/data/brkitr/word.txt
-+++ b/source/data/brkitr/word.txt
+--- a/source/data/brkitr/rules/word.txt
++++ b/source/data/brkitr/rules/word.txt
 @@ -35,10 +35,16 @@ $Hebrew_Letter      = [\p{Word_Break = Hebrew_Letter}];
  $ALetter            = [\p{Word_Break = ALetter}];
  $Single_Quote       = [\p{Word_Break = Single_Quote}];

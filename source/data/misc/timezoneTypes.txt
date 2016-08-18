@@ -1,11 +1,5 @@
-﻿// ***************************************************************************
-// *
-// * Copyright (C) 2016 International Business Machines
-// * Corporation and others. All Rights Reserved.
-// * Tool: org.unicode.cldr.icu.NewLdml2IcuConverter
-// * Source File: <path>/common/bcp47/timezone.xml
-// *
-// ***************************************************************************
+﻿// © 2016 and later: Unicode, Inc. and others.
+// License & terms of use: http://www.unicode.org/copyright.html#License
 timezoneTypes:table(nofallback){
     bcpTypeAlias{
         tz{
@@ -435,6 +429,7 @@ timezoneTypes:table(nofallback){
             "Asia:Tehran"{"irthr"}
             "Asia:Thimphu"{"btthi"}
             "Asia:Tokyo"{"jptyo"}
+            "Asia:Tomsk"{"rutof"}
             "Asia:Ulaanbaatar"{"mnuln"}
             "Asia:Urumqi"{"cnurc"}
             "Asia:Ust-Nera"{"ruunera"}
@@ -515,6 +510,7 @@ timezoneTypes:table(nofallback){
             "Europe:Jersey"{"jesth"}
             "Europe:Kaliningrad"{"rukgd"}
             "Europe:Kiev"{"uaiev"}
+            "Europe:Kirov"{"rukvx"}
             "Europe:Lisbon"{"ptlis"}
             "Europe:Ljubljana"{"silju"}
             "Europe:London"{"gblon"}

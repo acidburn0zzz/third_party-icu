@@ -105,6 +105,9 @@ component("icui18n") {
   # find  source/i18n -maxdepth 1  ! -type d  | egrep  '\.(c|cpp|h)$' |\
   # sort | sed 's/^\(.*\)$/    "\1",/'
   sources = [
+    "source/common/locdspnm.cpp",
+    "source/common/ucurr.cpp",
+    "source/common/ucurrimp.h",
     "source/i18n/affixpatternparser.cpp",
     "source/i18n/affixpatternparser.h",
     "source/i18n/alphaindex.cpp",
@@ -260,7 +263,6 @@ component("icui18n") {
     "source/i18n/islamcal.h",
     "source/i18n/japancal.cpp",
     "source/i18n/japancal.h",
-    "source/i18n/locdspnm.cpp",
     "source/i18n/measfmt.cpp",
     "source/i18n/measunit.cpp",
     "source/i18n/measure.cpp",
@@ -389,8 +391,6 @@ component("icui18n") {
     "source/i18n/ucol_sit.cpp",
     "source/i18n/ucoleitr.cpp",
     "source/i18n/ucsdet.cpp",
-    "source/i18n/ucurr.cpp",
-    "source/i18n/ucurrimp.h",
     "source/i18n/udat.cpp",
     "source/i18n/udateintervalformat.cpp",
     "source/i18n/udatpg.cpp",
@@ -467,7 +467,7 @@ component("icui18n") {
     "source/i18n/unicode/fpositer.h",
     "source/i18n/unicode/gender.h",
     "source/i18n/unicode/gregocal.h",
-    "source/i18n/unicode/locdspnm.h",
+    "source/common/unicode/locdspnm.h",
     "source/i18n/unicode/measfmt.h",
     "source/i18n/unicode/measunit.h",
     "source/i18n/unicode/measure.h",
@@ -502,15 +502,15 @@ component("icui18n") {
     "source/i18n/unicode/ucoleitr.h",
     "source/i18n/unicode/ucol.h",
     "source/i18n/unicode/ucsdet.h",
-    "source/i18n/unicode/ucurr.h",
+    "source/common/unicode/ucurr.h",
     "source/i18n/unicode/udateintervalformat.h",
     "source/i18n/unicode/udat.h",
     "source/i18n/unicode/udatpg.h",
-    "source/i18n/unicode/udisplaycontext.h",
+    "source/common/unicode/udisplaycontext.h",
     "source/i18n/unicode/ufieldpositer.h",
     "source/i18n/unicode/uformattable.h",
     "source/i18n/unicode/ugender.h",
-    "source/i18n/unicode/uldnames.h",
+    "source/common/unicode/uldnames.h",
     "source/i18n/unicode/ulocdata.h",
     "source/i18n/unicode/umsg.h",
     "source/i18n/unicode/unirepl.h",
@@ -652,8 +652,6 @@ component("icuuc") {
     "source/common/servslkf.cpp",
     "source/common/sharedobject.cpp",
     "source/common/sharedobject.h",
-    "source/common/simplepatternformatter.cpp",
-    "source/common/simplepatternformatter.h",
     "source/common/sprpimpl.h",
     "source/common/stringpiece.cpp",
     "source/common/stringtriebuilder.cpp",
@@ -777,8 +775,6 @@ component("icuuc") {
     "source/common/uresdata.h",
     "source/common/uresimp.h",
     "source/common/ureslocs.h",
-    "source/common/uresource.cpp",
-    "source/common/uresource.h",
     "source/common/usc_impl.c",
     "source/common/usc_impl.h",
     "source/common/uscript.c",
@@ -957,7 +953,6 @@ if (icu_use_data_file) {
   data_assembly = "$target_gen_dir/${data_bundle_prefix}_dat.S"
   action("make_data_assembly") {
     script = "scripts/make_data_assembly.py"
-
     inputs = [
       "$data_dir/$data_bundle",
     ]

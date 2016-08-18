@@ -137,7 +137,7 @@ eu{
         GU{"Guam"}
         GW{"Ginea-Bissau"}
         GY{"Guyana"}
-        HK{"Hong Kong AEB Txina"}
+        HK{"Hong Kong"}
         HM{"Heard eta McDonald uharteak"}
         HN{"Honduras"}
         HR{"Kroazia"}
@@ -191,7 +191,7 @@ eu{
         ML{"Mali"}
         MM{"Myanmar"}
         MN{"Mongolia"}
-        MO{"Macau AEB Txina"}
+        MO{"Macau"}
         MP{"Iparraldeko Mariana uharteak"}
         MQ{"Martinika"}
         MR{"Mauritania"}
@@ -226,7 +226,7 @@ eu{
         PM{"Saint-Pierre eta Mikelune"}
         PN{"Pitcairn uharteak"}
         PR{"Puerto Rico"}
-        PS{"Palestinako Lurraldeak"}
+        PS{"Palestina"}
         PT{"Portugal"}
         PW{"Palau"}
         PY{"Paraguai"}
@@ -300,9 +300,6 @@ eu{
     }
     Countries%short{
         GB{"EB"}
-        HK{"Hong Kong"}
-        MO{"Macau"}
-        PS{"Palestina"}
         US{"AEB"}
     }
     Countries%variant{
