@@ -532,6 +532,7 @@ component("icui18n") {
   ]
 
   # ICU uses RTTI
+  configs -= [ "//build/config:no_rtti" ]
   configs += [ ":rtti" ]
 
   configs += [ ":icu_code" ]
@@ -921,6 +922,7 @@ component("icuuc") {
     ":icudata",
   ]
 
+  configs -= [ "//build/config:no_rtti" ]
   configs += [ ":rtti" ]
   configs += [ ":icu_code" ]
 
