@@ -371,7 +371,10 @@ void DayPeriodRules::load(UErrorCode &errorCode) {
     DayPeriodRulesDataSink sink;
     ures_getAllTableItemsWithFallback(rb_dayPeriods.getAlias(), "", sink, errorCode);
 
+#if 0
+    // TODO: re-enable this, currently when built as a shared library this causes link errors.
     ucln_i18n_registerCleanup(UCLN_I18N_DAYPERIODRULES, dayPeriodRulesCleanup);
+#endif
 }
 
 const DayPeriodRules *DayPeriodRules::getInstance(const Locale &locale, UErrorCode &errorCode) {

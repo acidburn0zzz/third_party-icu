@@ -2,7 +2,9 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+import("//build/toolchain/shared.gni")
 import("//third_party/icu/config.gni")
+import("//packages/package.gni")
 
 # Meta target that includes both icuuc and icui18n. Most targets want both.
 # You can depend on the individually if you need to.
@@ -11,6 +13,20 @@ group("icu") {
     ":icui18n",
     ":icuuc",
   ]
+}
+
+group("icui18n") {
+  public_deps = [
+    ":icui18n_lib($shared_toolchain)",
+  ]
+  public_configs = [ ":icu_config" ]
+}
+
+group("icuuc") {
+  public_deps = [
+    ":icuuc_lib($shared_toolchain)",
+  ]
+  public_configs = [ ":icu_config" ]
 }
 
 # Shared config used by ICU and all dependents.
@@ -101,7 +117,10 @@ config("rtti") {
   cflags_cc = [ "-frtti" ]
 }
 
-component("icui18n") {
+shared_library("icui18n_lib") {
+  output_name = "icui18n"
+  visibility = [ ":*" ]
+
   # find  source/i18n -maxdepth 1  ! -type d  | egrep  '\.(c|cpp|h)$' |\
   # sort | sed 's/^\(.*\)$/    "\1",/'
   sources = [
@@ -528,12 +547,14 @@ component("icui18n") {
 
   defines = [ "U_I18N_IMPLEMENTATION" ]
   deps = [
-    ":icuuc",
+    ":icuuc_lib",
   ]
 
   # ICU uses RTTI
   configs -= [ "//build/config:no_rtti" ]
   configs += [ ":rtti" ]
+
+  configs -= [ "//build/config:symbol_visibility_hidden" ]
 
   configs += [ ":icu_code" ]
   public_configs = [ ":icu_config" ]
@@ -544,7 +565,10 @@ component("icui18n") {
   ]
 }
 
-component("icuuc") {
+shared_library("icuuc_lib") {
+  visibility = [ ":*" ]
+  output_name = "icuuc"
+
   # find  source/common -maxdepth 1  ! -type d  | egrep  '\.(c|cpp|h)$' |\
   # sort | sed 's/^\(.*\)$/    "\1",/'
   sources = [
@@ -926,6 +950,8 @@ component("icuuc") {
   configs += [ ":rtti" ]
   configs += [ ":icu_code" ]
 
+  configs -= [ "//build/config:symbol_visibility_hidden" ]
+
   public_configs = [ ":icu_config" ]
 
   if (icu_use_data_file) {
@@ -982,4 +1008,21 @@ if (icu_use_data_file) {
       ":make_data_assembly",
     ]
   }
+}
+
+package("package") {
+  package_name = "icu"
+
+  deps = [
+    ":icu",
+  ]
+
+  libraries = [
+    {
+      name = "libicui18n.so"
+    },
+    {
+      name = "libicuuc.so"
+    },
+  ]
 }
