@@ -2,7 +2,6 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-import("//build/toolchain/shared.gni")
 import("//third_party/icu/config.gni")
 import("//packages/package.gni")
 
@@ -13,20 +12,6 @@ group("icu") {
     ":icui18n",
     ":icuuc",
   ]
-}
-
-group("icui18n") {
-  public_deps = [
-    ":icui18n_lib($shared_toolchain)",
-  ]
-  public_configs = [ ":icu_config" ]
-}
-
-group("icuuc") {
-  public_deps = [
-    ":icuuc_lib($shared_toolchain)",
-  ]
-  public_configs = [ ":icu_config" ]
 }
 
 # Shared config used by ICU and all dependents.
@@ -117,10 +102,7 @@ config("rtti") {
   cflags_cc = [ "-frtti" ]
 }
 
-shared_library("icui18n_lib") {
-  output_name = "icui18n"
-  visibility = [ ":*" ]
-
+shared_library("icui18n") {
   # find  source/i18n -maxdepth 1  ! -type d  | egrep  '\.(c|cpp|h)$' |\
   # sort | sed 's/^\(.*\)$/    "\1",/'
   sources = [
@@ -547,7 +529,7 @@ shared_library("icui18n_lib") {
 
   defines = [ "U_I18N_IMPLEMENTATION" ]
   deps = [
-    ":icuuc_lib",
+    ":icuuc",
   ]
 
   # ICU uses RTTI
@@ -565,10 +547,7 @@ shared_library("icui18n_lib") {
   ]
 }
 
-shared_library("icuuc_lib") {
-  visibility = [ ":*" ]
-  output_name = "icuuc"
-
+shared_library("icuuc") {
   # find  source/common -maxdepth 1  ! -type d  | egrep  '\.(c|cpp|h)$' |\
   # sort | sed 's/^\(.*\)$/    "\1",/'
   sources = [
