@@ -25,6 +25,9 @@ config("icu_config") {
     # NaCl-related builds also fail looking for dlfcn.h when it's enabled.
     "U_ENABLE_DYLOAD=0",
   ]
+  cflags = [
+    "-Wno-enum-compare-switch",
+  ]
 
   is_component_build = false
   if (!is_component_build) {
