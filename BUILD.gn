@@ -994,6 +994,7 @@ if (icu_use_data_file) {
 
 package("package") {
   package_name = "icu"
+  system_image = true
 
   deps = [
     ":icu",
