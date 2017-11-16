@@ -3,7 +3,6 @@
 # found in the LICENSE file.
 
 import("//third_party/icu/config.gni")
-import("//packages/package.gni")
 
 # Meta target that includes both icuuc and icui18n. Most targets want both.
 # You can depend on the individually if you need to.
@@ -990,22 +989,4 @@ if (icu_use_data_file) {
       ":make_data_assembly",
     ]
   }
-}
-
-package("package") {
-  package_name = "icu"
-  system_image = true
-
-  deps = [
-    ":icu",
-  ]
-
-  libraries = [
-    {
-      name = "libicui18n.so"
-    },
-    {
-      name = "libicuuc.so"
-    },
-  ]
 }
