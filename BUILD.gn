@@ -84,7 +84,7 @@ config("icu_code") {
       "/wd4333",  # Right shift by too large amount.
       "/utf-8",   # ICU source files are in UTF-8.
     ]
-  } else if (is_linux || is_android) {
+  } else if (is_linux || is_android || is_fuchsia) {
     cflags += [
       "-Wno-unused-function",
     ]
@@ -100,7 +100,7 @@ config("icu_code") {
       "-Wno-unused-function",
     ]
   }
-  if (is_clang || is_linux || is_android) {
+  if (is_clang || is_linux || is_android || is_fuchsia) {
     cflags += [
       # ICU uses its own deprecated functions.
       "-Wno-deprecated-declarations",
@@ -108,7 +108,7 @@ config("icu_code") {
   }
 }
 
-component("icui18n") {
+shared_library("icui18n") {
   # find  source/i18n -maxdepth 1  ! -type d  | egrep  '\.(c|cpp|h)$' |\
   # sort | sed 's/^\(.*\)$/    "\1",/'
   sources = [
@@ -539,25 +539,16 @@ component("icui18n") {
 
   # ICU uses RTTI, replace the default "no rtti" config.
   configs -= [
-    "//build/config/compiler:no_rtti",  # ICU uses RTTI.
-    "//build/config/compiler:chromium_code",
+    "//build/config:no_rtti",
+    "//build/config:symbol_visibility_hidden",
   ]
-  configs += [
-    "//build/config/compiler:rtti",
-    "//build/config/compiler:no_chromium_code",
-  ]
+  configs += [ "//build/config:rtti" ]
 
   configs += [ ":icu_code" ]
   public_configs = [ ":icu_config" ]
-
-  if (is_fuchsia) {
-    # Fuchsia puts its own libicui18n.so in /system/lib where we need to put our
-    # .so when doing component builds, so we need to give this a different name.
-    output_name = "icui18n_cr"
-  }
 }
 
-component("icuuc") {
+shared_library("icuuc") {
   # find  source/common -maxdepth 1  ! -type d  | egrep  '\.(c|cpp|h)$' |\
   # sort | sed 's/^\(.*\)$/    "\1",/'
   sources = [
@@ -952,13 +943,10 @@ component("icuuc") {
   ]
 
   configs -= [
-    "//build/config/compiler:no_rtti",  # ICU uses RTTI.
-    "//build/config/compiler:chromium_code",
+    "//build/config:no_rtti",
+    "//build/config:symbol_visibility_hidden",
   ]
-  configs += [
-    "//build/config/compiler:rtti",
-    "//build/config/compiler:no_chromium_code",
-  ]
+  configs += [ "//build/config:rtti" ]
   configs += [ ":icu_code" ]
 
   public_configs = [ ":icu_config" ]
@@ -966,12 +954,6 @@ component("icuuc") {
   if (is_win || icu_use_data_file) {
     sources += [ "source/stubdata/stubdata.cpp" ]
     defines += [ "U_ICUDATAENTRY_IN_COMMON" ]
-  }
-
-  if (is_fuchsia) {
-    # Fuchsia puts its own libicuuc.so in /system/lib where we need to put our
-    # .so when doing component builds, so we need to give this a different name.
-    output_name = "icuuc_cr"
   }
 }
 
