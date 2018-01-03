@@ -9,10 +9,6 @@ if (is_android) {
   import("//build/config/android/rules.gni")
 }
 
-if (is_mac) {
-  import("//build/config/sanitizers/sanitizers.gni")
-}
-
 # Meta target that includes both icuuc and icui18n. Most targets want both.
 # You can depend on the individually if you need to.
 group("icu") {
