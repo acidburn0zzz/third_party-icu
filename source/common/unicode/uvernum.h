@@ -125,12 +125,12 @@
  *  This value will change in the subsequent releases of ICU
  *  @stable ICU 2.6
  */
-#if U_PLATFORM_HAS_WINUWP_API == 0
+#ifndef U_PLATFORM_HAS_WINUWP_API
 #define U_ICU_VERSION_SHORT "59"
 #else
 // U_DISABLE_RENAMING does not impact dat file name
 #define U_ICU_VERSION_SHORT
-#endif /* U_PLATFORM_HAS_WINUWP_API == 0 */
+#endif /* U_PLATFORM_HAS_WINUWP_API */
 
 #ifndef U_HIDE_INTERNAL_API
 /** Data version in ICU4C.
