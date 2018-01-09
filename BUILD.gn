@@ -104,7 +104,13 @@ config("icu_code") {
   }
 }
 
-shared_library("icui18n") {
+if (current_toolchain == host_toolchain) {
+  library_type = "static_library"
+} else {
+  library_type = "shared_library"
+}
+
+target(library_type, "icui18n") {
   # find  source/i18n -maxdepth 1  ! -type d  | egrep  '\.(c|cpp|h)$' |\
   # sort | sed 's/^\(.*\)$/    "\1",/'
   sources = [
@@ -544,7 +550,7 @@ shared_library("icui18n") {
   public_configs = [ ":icu_config" ]
 }
 
-shared_library("icuuc") {
+target(library_type, "icuuc") {
   # find  source/common -maxdepth 1  ! -type d  | egrep  '\.(c|cpp|h)$' |\
   # sort | sed 's/^\(.*\)$/    "\1",/'
   sources = [
